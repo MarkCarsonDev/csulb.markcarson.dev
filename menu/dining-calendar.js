@@ -667,6 +667,17 @@ function renderWeekLabel() {
   const cycleEl  = document.getElementById('cycle-label');
   cycleEl.textContent  = cycleNum ? `Cycle ${cycleNum}` : '';
   cycleEl.style.display = cycleNum ? '' : 'none';
+
+  // Prev/next buttons show the adjacent week range
+  const prevMon = addDays(mon, -7);
+  const prevSun = addDays(mon, -1);
+  document.getElementById('btn-prev-week').textContent =
+    `\u2039 ${formatMonthDay(prevMon)} - ${formatMonthDay(prevSun)}`;
+
+  const nextMon = addDays(mon, 7);
+  const nextSun = addDays(mon, 13);
+  document.getElementById('btn-next-week').textContent =
+    `${formatMonthDay(nextMon)} - ${formatMonthDay(nextSun)} \u203a`;
 }
 
 function renderGrid() {
