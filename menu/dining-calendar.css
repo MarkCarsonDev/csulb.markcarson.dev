@@ -260,19 +260,20 @@ header h1 {
 .cal-day:hover:not(.cal-day-empty):not(.cal-selected) { background: #eaf1f8; border-radius: 50%; }
 .cal-day-empty { cursor: default; pointer-events: none; }
 
-/* Today jump button — always visible in controls bar */
+/* Today jump button — sits below the week/cycle label */
 .today-jump-btn {
   background: none;
   border: 1.5px solid var(--border-gray);
   border-radius: var(--radius);
   font-family: var(--font);
-  font-size: 0.82rem;
+  font-size: 0.75rem;
   font-weight: 600;
   color: var(--primary);
-  padding: 0.4rem 0.85rem;
+  padding: 0.2rem 0.65rem;
   cursor: pointer;
   white-space: nowrap;
   transition: background 0.12s, border-color 0.12s;
+  margin-top: 0.3rem;
 }
 .today-jump-btn:hover { background: #f0f0f0; border-color: var(--primary); }
 
