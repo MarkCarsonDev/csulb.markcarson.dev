@@ -463,28 +463,35 @@ function parseHolidayClosures(guideDoc) {
   }
 
   accordion.querySelectorAll('h5').forEach(h5 => {
-    const h5Text = h5.textContent.replace(/\u00a0/g, ' ');
+    const h5Text = h5.textContent.replace(/\u00a0/g, ' ').trim();
     const allMatches = [...h5Text.matchAll(dateRe)];
     if (allMatches.length === 0) return;
 
-    // First P sibling following this H5 (within same parent)
-    let descText = '';
+    // Collect all P siblings following this H5 until the next heading
+    const pTexts = [];
     let el = h5.nextElementSibling;
     while (el && !['H3', 'H4', 'H5'].includes(el.tagName)) {
-      if (el.tagName === 'P') { descText = el.textContent; break; }
+      if (el.tagName === 'P') {
+        const t = el.textContent.replace(/\u00a0/g, ' ').trim();
+        if (t) pTexts.push(t);
+      }
       el = el.nextElementSibling;
     }
+    const descText = pTexts.join('\n');
+
+    // Full text exactly as it appears in the guide
+    const fullText = h5Text + (descText ? '\n' + descText : '');
 
     const combined = (h5Text + ' ' + descText).toLowerCase();
     let label = 'Holiday Closure';
-    if (/spring break/.test(combined))   label = 'Spring Break';
+    if (/spring break/.test(combined))      label = 'Spring Break';
     else if (/thanksgiving/.test(combined)) label = 'Thanksgiving';
     else if (/fall break/.test(combined))   label = 'Fall Break';
     else if (/labor day/.test(combined))    label = 'Labor Day';
     else if (/veteran/.test(combined))      label = 'Veterans Day';
     else if (/winter/.test(combined))       label = 'Winter Break';
 
-    const entry = { label };
+    const entry = { label, text: fullText };
     const isRange = /\bto\b/i.test(h5Text) && allMatches.length >= 2;
 
     if (isRange) {
@@ -515,6 +522,27 @@ function pushItem(dayMenu, meal, hall, name, allergens) {
 }
 
 // ── Render helpers ────────────────────────────────────────────
+function makeWarningIcon() {
+  const NS  = 'http://www.w3.org/2000/svg';
+  const svg = document.createElementNS(NS, 'svg');
+  svg.setAttribute('viewBox', '0 0 16 16');
+  svg.setAttribute('width', '9');
+  svg.setAttribute('height', '9');
+  svg.setAttribute('fill', 'currentColor');
+  svg.setAttribute('aria-hidden', 'true');
+  svg.classList.add('holiday-icon');
+  const path = document.createElementNS(NS, 'path');
+  // Bootstrap exclamation-triangle-fill
+  path.setAttribute('d',
+    'M8.982 1.566a1.13 1.13 0 0 0-1.96 0L.165 13.233c-.457.778.091 1.767.98 ' +
+    '1.767h13.713c.889 0 1.438-.99.98-1.767L8.982 1.566zM8 5c.535 0 .954.462.9' +
+    '.995l-.35 3.507a.552.552 0 0 1-1.1 0L7.1 5.995A.905.905 0 0 1 8 5zm.002 ' +
+    '6a1 1 0 1 1 0 2 1 1 0 0 1 0-2z'
+  );
+  svg.appendChild(path);
+  return svg;
+}
+
 function makeBadge(code) {
   const cls  = ALLERGEN_CSS[code] || 'badge-SS';
   const span = document.createElement('span');
@@ -547,12 +575,13 @@ function showDietaryTooltip(e) {
   showTooltip(e, DIETARY_TOOLTIP);
 }
 function moveDietaryTooltip(e) {
-  const tip = document.getElementById('dietary-tooltip');
-  const x = e.clientX + 12;
-  const y = e.clientY - 8;
-  const tipW = 230;
-  tip.style.left = (x + tipW > window.innerWidth ? x - tipW - 20 : x) + 'px';
-  tip.style.top  = Math.max(4, y - tip.offsetHeight) + 'px';
+  const tip  = document.getElementById('dietary-tooltip');
+  const x    = e.clientX + 14;
+  const y    = e.clientY - 8;
+  const tipW = tip.offsetWidth || 260;
+  const tipH = tip.offsetHeight || 40;
+  tip.style.left = (x + tipW > window.innerWidth ? x - tipW - 24 : x) + 'px';
+  tip.style.top  = Math.max(4, y - tipH) + 'px';
 }
 function hideDietaryTooltip() {
   document.getElementById('dietary-tooltip').style.opacity = '0';
@@ -651,10 +680,14 @@ function renderGrid() {
     const today    = isToday(date);
     const selected = i === state.mobileActiveDayIndex;
 
+    const dateKey = toDateKey(date);
+    const holiday = state.holidayMap?.get(dateKey);
+
     const card = document.createElement('div');
     card.className = 'day-card'
       + (today    ? ' today'    : '')
-      + (selected ? ' selected' : '');
+      + (selected ? ' selected' : '')
+      + (holiday  ? ' holiday-warning' : '');
     card.style.cursor = 'pointer';
 
     const hdr = document.createElement('div');
@@ -664,6 +697,15 @@ function renderGrid() {
       <div class="day-date">${formatMonthDay(date)}</div>
       ${today ? '<div class="today-badge">Today</div>' : ''}
     `;
+
+    // Holiday warning: icon in day-name + tooltip on header
+    if (holiday) {
+      hdr.style.cursor = 'help';
+      hdr.addEventListener('mouseenter', e => showTooltip(e, holiday.text));
+      hdr.addEventListener('mousemove',  moveDietaryTooltip);
+      hdr.addEventListener('mouseleave', hideDietaryTooltip);
+      hdr.querySelector('.day-name').prepend(makeWarningIcon());
+    }
 
     // Asterisk if cycle menu has no vegan items
     const hasVegan = items.some(it => it.dietary === 'vegan');
@@ -686,8 +728,6 @@ function renderGrid() {
 
     if (items.length === 0) {
       card.classList.add('closed');
-      const dateKey = toDateKey(date);
-      const holiday = state.holidayMap?.get(dateKey);
       const msg = document.createElement('div');
       if (holiday) {
         msg.className = 'closed-holiday-msg';
@@ -709,6 +749,15 @@ function renderGrid() {
       body.appendChild(makeAlwaysAvailSection(state.activeMeal));
     }
 
+    // Holiday tooltip on body area; yield to dietary badge tooltips
+    if (holiday) {
+      body.addEventListener('mousemove', e => {
+        if (e.target.closest('.badge-vegan, .badge-veg, .badge-pesc')) return;
+        showTooltip(e, holiday.text);
+      });
+      body.addEventListener('mouseleave', hideDietaryTooltip);
+    }
+
     card.appendChild(body);
 
     // Clicking a day card selects it
@@ -728,15 +777,25 @@ function renderMobileDay() {
   const dayName = DAY_NAMES[date.getDay()];
   const items   = getItemsForDay(dayName);
   const today   = isToday(date);
+  const dateKey = toDateKey(date);
+  const holiday = state.holidayMap?.get(dateKey);
 
-  document.getElementById('mobile-day-label').textContent =
+  const mobileLbl = document.getElementById('mobile-day-label');
+  mobileLbl.textContent =
     `${DAY_SHORT[date.getDay()]} ${formatMonthDay(date)}${today ? ' · Today' : ''}`;
+
+  // Holiday styling on mobile day label
+  mobileLbl.classList.toggle('holiday-warning', !!holiday);
+  mobileLbl.onmouseenter = holiday ? (e => showTooltip(e, holiday.text)) : null;
+  mobileLbl.onmousemove  = holiday ? moveDietaryTooltip : null;
+  mobileLbl.onmouseleave = holiday ? hideDietaryTooltip : null;
+  mobileLbl.style.cursor = holiday ? 'help' : '';
+  if (holiday) mobileLbl.prepend(makeWarningIcon());
 
   const content = document.getElementById('mobile-day-content');
   content.innerHTML = '';
 
   if (items.length === 0) {
-    const dateKey = toDateKey(date);
     const holiday = state.holidayMap?.get(dateKey);
     const msg = document.createElement('div');
     if (holiday) {
