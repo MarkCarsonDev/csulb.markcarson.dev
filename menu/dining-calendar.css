@@ -283,13 +283,15 @@ header h1 {
   color: var(--white);
   border: none;
   border-radius: var(--radius);
-  padding: 0.45rem 1rem;
-  font-size: 0.85rem;
+  padding: 0.45rem 0.65rem;
+  font-size: 0.78rem;
   font-weight: 600;
   cursor: pointer;
   transition: background 0.15s, transform 0.1s;
   white-space: nowrap;
   font-family: var(--font);
+  min-width: 5.5rem;
+  text-align: center;
 }
 .nav-btn:hover  { background: var(--accent); }
 .nav-btn:active { transform: scale(0.96); }

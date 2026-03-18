@@ -24,15 +24,16 @@
       <!-- Controls -->
       <div class="controls-card">
         <div class="controls-nav">
-          <button id="btn-prev-week" class="nav-btn" aria-label="Previous week">&#8592; Prev</button>
+          <button id="btn-prev-week" class="nav-btn" aria-label="Previous week">&#8592;</button>
 
           <div class="week-info-wrap">
             <button id="btn-calendar" class="calendar-toggle" aria-label="Open date picker" aria-expanded="false">
               <span id="week-label">Loading…</span>
               <span id="cycle-label" class="cycle-tag"></span>
             </button>
+            <button id="cal-today-btn" class="today-jump-btn" aria-label="Go to today">Today</button>
 
-            <!-- Calendar dropdown -->
+            <!-- Calendar dropdown (absolutely positioned, doesn't affect flow) -->
             <div id="calendar-dropdown" class="calendar-dropdown hidden" role="dialog" aria-label="Date picker" aria-modal="true">
               <div class="cal-header">
                 <button id="cal-prev-month" class="cal-nav-btn" aria-label="Previous month">&#8249;</button>
@@ -44,10 +45,10 @@
                 <span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
               </div>
               <div id="cal-days" class="cal-days"></div>
-              <button id="cal-today-btn" class="today-jump-btn" aria-label="Go to today">Today</button>
+            </div>
           </div>
 
-          <button id="btn-next-week" class="nav-btn" aria-label="Next week">Next &#8594;</button>
+          <button id="btn-next-week" class="nav-btn" aria-label="Next week">&#8594;</button>
         </div>
 
         <div class="controls-filters">
