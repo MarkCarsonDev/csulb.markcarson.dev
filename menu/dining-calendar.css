@@ -536,19 +536,46 @@ header h1 {
   cursor: help;
 }
 
-/* ── Closed day state ─────────────────────────────────── */
+/* ── Holiday warning + closed day state ───────────────── */
+/* holiday-warning: date is in the guide's special-hours list
+   (applies even when items are present — e.g. last meal day)
+   closed: no cycle items for this meal/hall */
+
+/* Full card red tint */
+.day-card.holiday-warning {
+  background: #fdf3f3;
+  border-color: #f0c0c0;
+}
+.day-card.holiday-warning .day-header,
 .day-card.closed .day-header {
   background: #fdecec;
   border-bottom-color: #f5c6c6;
 }
+.day-card.holiday-warning .day-name,
+.day-card.holiday-warning .day-date,
 .day-card.closed .day-name,
 .day-card.closed .day-date {
   color: #9b2020;
+  opacity: 1;
 }
-/* Keep gold border for selected, but red header */
-.day-card.closed.selected .day-header {
+
+/* Selected + holiday: replace gold with translucent red throughout */
+.day-card.holiday-warning.selected {
+  background: rgba(180, 40, 40, 0.09);
+  border-color: #d87070;
+}
+.day-card.holiday-warning.selected .day-header {
   background: #f8d7d7;
   border-bottom-color: #e0a0a0;
+}
+/* Items area gets a warm red wash instead of yellow */
+.day-card.holiday-warning.selected .day-body {
+  background: rgba(180, 40, 40, 0.06);
+}
+
+/* Mobile day label holiday styling */
+.mobile-day-label.holiday-warning {
+  color: #9b2020;
 }
 
 .closed-holiday-msg {
@@ -569,6 +596,17 @@ header h1 {
   padding: 0.4rem 0.3rem;
   letter-spacing: 0.03em;
   text-transform: uppercase;
+}
+
+/* ── Holiday alert icon ───────────────────────────────── */
+.holiday-icon {
+  display: inline-block;
+  vertical-align: middle;
+  margin-right: 0.22rem;
+  position: relative;
+  top: -1px;
+  color: #9b2020;
+  flex-shrink: 0;
 }
 
 /* ── No-vegan asterisk ────────────────────────────────── */
@@ -626,12 +664,13 @@ header h1 {
   background: #fff;
   color: #333;
   border: 1px solid #ccc;
-  font-size: 0.68rem;
+  font-size: 0.72rem;
   font-weight: 400;
-  line-height: 1.5;
-  padding: 0.5rem 0.7rem;
+  line-height: 1.55;
+  padding: 0.6rem 0.8rem;
   border-radius: 6px;
-  width: 260px;
+  max-width: 340px;
+  width: max-content;
   white-space: pre-wrap;
   text-align: left;
   pointer-events: none;
