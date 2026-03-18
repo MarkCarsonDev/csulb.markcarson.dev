@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CSULB Dining Calendar</title>
+  <link rel="stylesheet" href="dining-calendar.css" />
+</head>
+<body>
+
+  <header>
+    <div class="header-inner">
+      <img class="header-logo" src="https://www.csulb.edu/themes/custom/csulb/images/lb.svg" alt="CSULB" />
+      <div>
+        <h1>Dining Calendar</h1>
+        <p class="header-sub">CSULB Residential Dining — Weekly Menu</p>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <div class="container">
+
+      <!-- Controls -->
+      <div class="controls-card">
+        <div class="controls-nav">
+          <button id="btn-prev-week" class="nav-btn" aria-label="Previous week">&#8592; Prev</button>
+
+          <div class="week-info-wrap">
+            <button id="btn-calendar" class="calendar-toggle" aria-label="Open date picker" aria-expanded="false">
+              <span id="week-label">Loading…</span>
+              <span id="cycle-label" class="cycle-tag"></span>
+            </button>
+
+            <!-- Calendar dropdown -->
+            <div id="calendar-dropdown" class="calendar-dropdown hidden" role="dialog" aria-label="Date picker" aria-modal="true">
+              <div class="cal-header">
+                <button id="cal-prev-month" class="cal-nav-btn" aria-label="Previous month">&#8249;</button>
+                <span id="cal-month-label" class="cal-month-label"></span>
+                <button id="cal-next-month" class="cal-nav-btn" aria-label="Next month">&#8250;</button>
+              </div>
+              <div class="cal-dow-row">
+                <span>Su</span><span>Mo</span><span>Tu</span>
+                <span>We</span><span>Th</span><span>Fr</span><span>Sa</span>
+              </div>
+              <div id="cal-days" class="cal-days"></div>
+            </div>
+          </div>
+
+          <button id="cal-today-btn" class="today-jump-btn" aria-label="Go to today">Today</button>
+
+          <button id="btn-next-week" class="nav-btn" aria-label="Next week">Next &#8594;</button>
+        </div>
+
+        <div class="controls-filters">
+          <div class="meal-tabs" role="tablist" aria-label="Meal period">
+            <button class="meal-tab" data-meal="Breakfast" role="tab">Breakfast</button>
+            <button class="meal-tab" data-meal="Brunch"    role="tab">Brunch</button>
+            <button class="meal-tab" data-meal="Lunch"     role="tab">Lunch</button>
+            <button class="meal-tab" data-meal="Dinner"    role="tab">Dinner</button>
+          </div>
+
+          <div class="hall-select-wrap">
+            <label for="hall-select" class="sr-only">Dining hall</label>
+            <select id="hall-select">
+              <option value="Beachside">Beachside</option>
+              <option value="Hillside">Hillside</option>
+              <option value="Parkside">Parkside</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- Status / spinner -->
+      <div id="status-bar" class="status-bar" aria-live="polite">
+        <div class="spinner" id="spinner"></div>
+        <span id="status-msg">Fetching menu data…</span>
+      </div>
+
+      <!-- Desktop 7-column grid -->
+      <div id="week-grid" class="week-grid" aria-label="Weekly menu"></div>
+
+      <!-- Mobile single-day view -->
+      <div id="mobile-day-view" class="mobile-day-view">
+        <div class="mobile-day-nav">
+          <button id="btn-prev-day" class="nav-btn" aria-label="Previous day">&#8592;</button>
+          <span id="mobile-day-label" class="mobile-day-label"></span>
+          <button id="btn-next-day" class="nav-btn" aria-label="Next day">&#8594;</button>
+        </div>
+        <div id="mobile-day-content" class="mobile-day-content"></div>
+      </div>
+
+      <!-- Legend + disclaimer -->
+      <footer class="page-footer">
+        <div class="legend">
+          <h3>Allergen Key</h3>
+          <div class="legend-grid">
+            <span class="badge badge-M">M</span><span class="legend-label">Milk</span>
+            <span class="badge badge-E">E</span><span class="legend-label">Eggs</span>
+            <span class="badge badge-W">W</span><span class="legend-label">Wheat</span>
+            <span class="badge badge-S">S</span><span class="legend-label">Soy</span>
+            <span class="badge badge-P">P</span><span class="legend-label">Peanuts</span>
+            <span class="badge badge-TN">TN</span><span class="legend-label">Tree Nuts</span>
+            <span class="badge badge-F">F</span><span class="legend-label">Fish</span>
+            <span class="badge badge-SF">SF-C</span><span class="legend-label">Shellfish</span>
+            <span class="badge badge-SS">SS</span><span class="legend-label">Sesame</span>
+            <div style="width:100%;height:0"></div>
+            <span class="badge badge-vegan">Vegan</span><span class="legend-label">Vegan</span>
+            <span class="badge badge-veg">Vt.</span><span class="legend-label">Vegetarian</span>
+            <span class="badge badge-pesc">Pesc.</span><span class="legend-label">Pescatarian</span>
+          </div>
+        </div>
+        <p class="disclaimer">
+          Menu data is sourced live from <a href="https://www.csulb.edu/beach-shops/residential-dining-menus" target="_blank" rel="noopener">csulb.edu</a>.
+          Allergen and dietary labels are automatically derived from item names and allergen codes — verify with dining staff for accuracy.
+          All information subject to change without notice.
+        </p>
+      </footer>
+
+    </div>
+  </main>
+
+  <div id="dietary-tooltip"></div>
+  <script src="dining-calendar.js"></script>
+</body>
+</html>

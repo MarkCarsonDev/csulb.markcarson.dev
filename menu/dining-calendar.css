@@ -1,0 +1,740 @@
+/* ============================================================
+   dining-calendar.css — CSULB Dining Calendar
+   ============================================================ */
+
+:root {
+  --primary:     #1a1a1a;   /* near-black */
+  --primary-dk:  #000000;
+  --accent:      #444444;   /* dark gray for hover states */
+  --gold:        #FFC425;   /* today / selected highlight */
+  --gold-dark:   #d9a800;
+  --secondary:   #1b262c;
+  --white:       #ffffff;
+  --light-gray:  #f4f4f4;
+  --border-gray: #d8d8d8;
+  --text:        #1b262c;
+  --text-muted:  #666;
+  --radius:      8px;
+  --shadow:      0 2px 6px rgba(0,0,0,0.10);
+  --shadow-md:   0 4px 14px rgba(0,0,0,0.15);
+  --font:        'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* ── Reset ────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+body {
+  font-family: var(--font);
+  background: var(--light-gray);
+  color: var(--text);
+  line-height: 1.5;
+  min-height: 100vh;
+}
+
+a { color: var(--accent); }
+
+.sr-only {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+
+/* ── Header ───────────────────────────────────────────── */
+header {
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dk) 100%);
+  color: var(--white);
+  padding: 1.25rem 1.5rem;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.25);
+  border-bottom: 4px solid var(--gold);
+}
+
+.header-inner {
+  max-width: 1300px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.header-logo { height: 48px; width: auto; filter: brightness(0) invert(1); }
+
+header h1 {
+  font-size: 1.6rem;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.header-sub {
+  font-size: 0.85rem;
+  opacity: 0.8;
+  margin-top: 0.1rem;
+  color: var(--gold);
+}
+
+/* ── Container ────────────────────────────────────────── */
+.container {
+  max-width: 1300px;
+  margin: 0 auto;
+  padding: 1.25rem 1rem 2rem;
+}
+
+/* ── Controls card ────────────────────────────────────── */
+.controls-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 0.9rem 1.2rem;
+  margin-bottom: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.controls-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+/* ── Week info + calendar toggle ──────────────────────── */
+.week-info-wrap {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  position: relative;
+}
+
+.calendar-toggle {
+  background: none;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  font-family: var(--font);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--text);
+  padding: 0.3rem 0.6rem;
+  border-radius: var(--radius);
+  transition: background 0.15s, color 0.15s;
+}
+.calendar-toggle:hover { background: #eaf1f8; color: var(--primary); }
+.calendar-toggle:focus { outline: 2px solid var(--gold); outline-offset: 2px; }
+
+.cal-btn-icon { font-size: 1rem; }
+
+#cycle-label {
+  background: var(--primary);
+  color: var(--white);
+  font-size: 0.68rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 20px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+
+/* ── Calendar dropdown ────────────────────────────────── */
+.calendar-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 300;
+  background: var(--white);
+  border: 1px solid var(--border-gray);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-md);
+  padding: 0.85rem;
+  min-width: 260px;
+}
+.calendar-dropdown.hidden { display: none; }
+
+.cal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 0.6rem;
+}
+
+.cal-month-label {
+  font-weight: 700;
+  font-size: 0.9rem;
+  color: var(--primary);
+}
+
+.cal-nav-btn {
+  background: none;
+  border: none;
+  font-size: 1.3rem;
+  font-weight: 700;
+  cursor: pointer;
+  color: var(--primary);
+  padding: 0.1rem 0.4rem;
+  border-radius: 4px;
+  line-height: 1;
+  transition: background 0.12s;
+}
+.cal-nav-btn:hover { background: #eaf1f8; }
+
+.cal-dow-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  margin-bottom: 0.25rem;
+}
+.cal-dow-row span {
+  text-align: center;
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  padding: 0.15rem 0;
+}
+
+.cal-days {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.cal-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  font-size: 0.78rem;
+  font-family: var(--font);
+  background: none;
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+  color: var(--text);
+  transition: background 0.12s, color 0.12s;
+  padding: 0;
+  position: relative;
+}
+
+/* Current-week highlight (non-circular stripe) */
+.cal-day.cal-in-week {
+  background: #e8f0f8;
+  color: var(--primary);
+  font-weight: 600;
+  border-radius: 0;
+}
+.cal-day.cal-week-start { border-radius: 50% 0 0 50%; }
+.cal-day.cal-week-end   { border-radius: 0 50% 50% 0; }
+
+/* Today indicator: bold + small dot below, no gold fill */
+.cal-day.cal-today {
+  font-weight: 800;
+  color: var(--primary);
+}
+.cal-day.cal-today::after {
+  content: '';
+  position: absolute;
+  bottom: 2px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 4px;
+  height: 4px;
+  background: var(--primary);
+  border-radius: 50%;
+}
+
+/* Selected date: gold fill */
+.cal-day.cal-selected {
+  background: var(--gold) !important;
+  color: var(--primary) !important;
+  font-weight: 700;
+  border-radius: 50% !important;
+}
+/* Keep today's dot visible when it's also selected */
+.cal-day.cal-today.cal-selected::after {
+  background: var(--primary-dk);
+}
+
+.cal-day:hover:not(.cal-day-empty):not(.cal-selected) { background: #eaf1f8; border-radius: 50%; }
+.cal-day-empty { cursor: default; pointer-events: none; }
+
+/* Today jump button — always visible in controls bar */
+.today-jump-btn {
+  background: none;
+  border: 1.5px solid var(--border-gray);
+  border-radius: var(--radius);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: var(--primary);
+  padding: 0.4rem 0.85rem;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.12s, border-color 0.12s;
+}
+.today-jump-btn:hover { background: #f0f0f0; border-color: var(--primary); }
+
+/* ── Nav buttons ──────────────────────────────────────── */
+.nav-btn {
+  background: var(--primary);
+  color: var(--white);
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.45rem 1rem;
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+  font-family: var(--font);
+}
+.nav-btn:hover  { background: var(--accent); }
+.nav-btn:active { transform: scale(0.96); }
+
+/* ── Meal tabs ────────────────────────────────────────── */
+.controls-filters {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.6rem;
+}
+
+.meal-tabs {
+  display: flex;
+  gap: 0.35rem;
+  flex-wrap: wrap;
+}
+
+.meal-tab {
+  background: var(--light-gray);
+  color: var(--text);
+  border: 1.5px solid var(--border-gray);
+  border-radius: 20px;
+  padding: 0.3rem 0.85rem;
+  font-size: 0.82rem;
+  font-weight: 600;
+  cursor: pointer;
+  font-family: var(--font);
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.meal-tab:hover  { background: #e8eef8; border-color: var(--accent); }
+.meal-tab.active { background: var(--primary); color: var(--white); border-color: var(--primary); }
+
+/* ── Hall select ──────────────────────────────────────── */
+.hall-select-wrap { margin-left: auto; }
+
+#hall-select {
+  font-family: var(--font);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text);
+  background: var(--white);
+  border: 1.5px solid var(--border-gray);
+  border-radius: var(--radius);
+  padding: 0.35rem 0.75rem;
+  cursor: pointer;
+}
+#hall-select:focus { outline: 2px solid var(--gold); }
+
+/* ── Status bar ───────────────────────────────────────── */
+.status-bar {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.75rem;
+  background: var(--white);
+  border-radius: var(--radius);
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  min-height: 2.4rem;
+  box-shadow: var(--shadow);
+}
+.status-bar.hidden { display: none; }
+
+.spinner {
+  width: 18px; height: 18px;
+  border: 2.5px solid var(--border-gray);
+  border-top-color: var(--gold);
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+.spinner.hidden { display: none; }
+@keyframes spin { to { transform: rotate(360deg); } }
+
+/* ── Week grid ────────────────────────────────────────── */
+.week-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 0.6rem;
+  margin-bottom: 1.25rem;
+}
+
+.day-card {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  transition: box-shadow 0.15s;
+  border: 2px solid transparent;
+}
+.day-card:hover { box-shadow: var(--shadow-md); }
+
+/* Selected day — gold highlight (driven by mobileActiveDayIndex) */
+.day-card.selected {
+  background: #fffbea;
+  border-color: var(--gold);
+}
+
+.day-header {
+  padding: 0.45rem 0.6rem 0.4rem;
+  background: #edf3f9;
+  border-bottom: 1px solid #dde8f0;
+  text-align: center;
+}
+.day-card.selected .day-header {
+  background: var(--gold);
+  border-bottom-color: var(--gold-dark);
+}
+
+.day-name {
+  font-weight: 700;
+  font-size: 0.78rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--primary);
+}
+
+.day-date {
+  font-size: 0.72rem;
+  color: var(--text-muted);
+}
+.day-card.selected .day-date { color: var(--primary); opacity: 0.75; }
+
+/* Today badge — shown on today's column regardless of selection */
+.today-badge {
+  display: inline-block;
+  font-size: 0.58rem;
+  font-weight: 800;
+  letter-spacing: 0.07em;
+  text-transform: uppercase;
+  background: var(--primary);
+  color: var(--gold);
+  padding: 0.06rem 0.4rem;
+  border-radius: 10px;
+  margin-top: 0.15rem;
+}
+/* When today is also selected, invert the badge colors slightly */
+.day-card.today.selected .today-badge {
+  background: rgba(0,0,0,0.25);
+  color: #fff;
+}
+
+.day-body {
+  padding: 0.5rem 0.55rem;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+/* ── Menu items + dietary backgrounds ─────────────────── */
+.menu-item {
+  font-size: 0.76rem;
+  line-height: 1.35;
+  padding: 0.25rem 0.3rem;
+  border-radius: 4px;
+}
+.menu-item:hover { background: #f5f7fc; }
+
+/* Dietary tint backgrounds */
+.menu-item.dietary-vegan {
+  background: rgba(26, 71, 49, 0.07);
+}
+.menu-item.dietary-vegan:hover {
+  background: rgba(26, 71, 49, 0.12);
+}
+.menu-item.dietary-vegetarian {
+  background: rgba(26, 71, 49, 0.035);
+}
+.menu-item.dietary-vegetarian:hover {
+  background: rgba(26, 71, 49, 0.07);
+}
+.menu-item.dietary-pescatarian {
+  background: rgba(13, 61, 82, 0.055);
+}
+.menu-item.dietary-pescatarian:hover {
+  background: rgba(13, 61, 82, 0.10);
+}
+
+.item-name {
+  display: block;
+  color: var(--text);
+  font-weight: 500;
+}
+
+.item-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.2rem;
+  margin-top: 0.18rem;
+}
+
+.empty-msg {
+  font-size: 0.75rem;
+  color: #aaa;
+  font-style: italic;
+  padding: 0.3rem;
+}
+
+/* ── Allergen badges ──────────────────────────────────── */
+.badge {
+  display: inline-block;
+  border-radius: 4px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.03em;
+  padding: 0.1rem 0.35rem;
+  line-height: 1.4;
+  white-space: nowrap;
+}
+
+.badge-M   { background: #faf0e6; color: #7c5c2e; }
+.badge-E   { background: #fef9ec; color: #9a6c00; }
+.badge-W   { background: #fdf0e0; color: #b84c00; }
+.badge-S   { background: #edf5ec; color: #2d6a4f; }
+.badge-P   { background: #fdf0f0; color: #c0392b; }
+.badge-TN  { background: #f5efe8; color: #8b4513; }
+.badge-F   { background: #e8f4f8; color: #2471a3; }
+.badge-SF  { background: #e8f8f5; color: #17a589; }
+.badge-SS  { background: #f4f3f1; color: #5d6d7e; }
+
+.badge-vegan {
+  background: #1a4731;
+  color: #e8f5e2;
+  border-radius: 10px;
+  position: static;
+  cursor: help;
+}
+.badge-veg {
+  background: #d4edda;
+  color: #1a4731;
+  border-radius: 10px;
+  position: static;
+  cursor: help;
+}
+.badge-pesc {
+  background: #0d3d52;
+  color: #cceeff;
+  border-radius: 10px;
+  position: static;
+  cursor: help;
+}
+
+/* ── Closed day state ─────────────────────────────────── */
+.day-card.closed .day-header {
+  background: #fdecec;
+  border-bottom-color: #f5c6c6;
+}
+.day-card.closed .day-name,
+.day-card.closed .day-date {
+  color: #9b2020;
+}
+/* Keep gold border for selected, but red header */
+.day-card.closed.selected .day-header {
+  background: #f8d7d7;
+  border-bottom-color: #e0a0a0;
+}
+
+.closed-holiday-msg {
+  font-size: 0.75rem;
+  color: #9b2020;
+  padding: 0.4rem 0.3rem;
+  line-height: 1.5;
+}
+.closed-holiday-msg a {
+  color: #c0392b;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.closed-simple-msg {
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #c0392b;
+  padding: 0.4rem 0.3rem;
+  letter-spacing: 0.03em;
+  text-transform: uppercase;
+}
+
+/* ── No-vegan asterisk ────────────────────────────────── */
+.no-vegan-asterisk {
+  display: inline-block;
+  font-size: 0.65rem;
+  font-weight: 900;
+  color: #c0392b;
+  cursor: help;
+  margin-left: 0.2rem;
+  vertical-align: super;
+  line-height: 1;
+}
+
+/* ── Always Available section ─────────────────────────── */
+.always-avail {
+  border-top: 1px dashed #ddd;
+  margin-top: 0.35rem;
+  padding-top: 0.25rem;
+}
+
+.always-avail-toggle {
+  background: none;
+  border: none;
+  font-family: var(--font);
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 0.2rem 0.3rem;
+  width: 100%;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 0.3rem;
+  border-radius: 4px;
+  transition: background 0.12s, color 0.12s;
+}
+.always-avail-toggle:hover { background: #f5f5f5; color: var(--primary); }
+
+.aa-arrow { font-size: 0.6rem; }
+
+.always-avail-body {
+  padding-top: 0.15rem;
+}
+.always-avail-body .menu-item {
+  font-size: 0.7rem;
+  opacity: 0.9;
+}
+
+/* ── Dietary tooltip — uses a fixed tooltip div via JS ── */
+#dietary-tooltip {
+  position: fixed;
+  z-index: 9999;
+  background: #fff;
+  color: #333;
+  border: 1px solid #ccc;
+  font-size: 0.68rem;
+  font-weight: 400;
+  line-height: 1.5;
+  padding: 0.5rem 0.7rem;
+  border-radius: 6px;
+  width: 260px;
+  white-space: pre-wrap;
+  text-align: left;
+  pointer-events: none;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.15);
+  opacity: 0;
+  transition: opacity 0.15s;
+}
+
+/* ── Mobile ───────────────────────────────────────────── */
+.mobile-day-view { display: none; }
+
+.mobile-day-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 0.6rem 1rem;
+  margin-bottom: 0.75rem;
+}
+
+.mobile-day-label {
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--primary);
+}
+
+.mobile-day-content {
+  background: var(--white);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  padding: 1rem;
+  min-height: 200px;
+}
+
+.mobile-day-content .menu-item {
+  font-size: 0.88rem;
+  padding: 0.35rem 0.4rem;
+  border-bottom: 1px solid #f0f0f0;
+}
+.mobile-day-content .menu-item:last-child { border-bottom: none; }
+
+/* ── Footer ───────────────────────────────────────────── */
+.page-footer {
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid #ddd;
+}
+
+.legend h3 {
+  font-size: 0.85rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--primary);
+  margin-bottom: 0.5rem;
+}
+
+.legend-grid {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.3rem 0.6rem;
+  margin-bottom: 1rem;
+}
+
+.legend-label {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  margin-right: 0.4rem;
+}
+
+.disclaimer {
+  font-size: 0.75rem;
+  color: #999;
+  line-height: 1.5;
+}
+
+/* ── Error ────────────────────────────────────────────── */
+.error-msg {
+  background: #fdf0f0;
+  border: 1px solid #e0b0b0;
+  border-radius: var(--radius);
+  padding: 1rem 1.25rem;
+  color: #c0392b;
+  font-size: 0.9rem;
+}
+
+/* ── Responsive ───────────────────────────────────────── */
+@media (max-width: 768px) {
+  .week-grid       { display: none; }
+  .mobile-day-view { display: block; }
+  .controls-filters { flex-direction: column; align-items: flex-start; }
+  .hall-select-wrap { margin-left: 0; }
+  header { padding: 1rem; }
+  header h1 { font-size: 1.3rem; }
+  .header-logo { font-size: 1.5rem; }
+  .calendar-dropdown { min-width: 230px; }
+}
+
+@media (max-width: 480px) {
+  .meal-tab        { font-size: 0.78rem; padding: 0.28rem 0.65rem; }
+  .calendar-toggle { font-size: 0.88rem; }
+  .nav-btn         { padding: 0.4rem 0.65rem; font-size: 0.8rem; }
+}
